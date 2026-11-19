@@ -12,7 +12,7 @@ describe('Lógica del tablero Kanban', () => {
   it('crea una tarea nueva en estado Pendiente', () => {
     const task = createTask('Diseñar login', 'Pantalla de inicio')
     expect(task.title).toBe('Diseñar login')
-    expect(task.status).toBe(STATUSES.DONE)
+    expect(task.status).toBe(STATUSES.TODO)
   })
 
   it('no permite crear una tarea sin título', () => {
