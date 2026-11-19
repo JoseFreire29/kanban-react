@@ -13,12 +13,33 @@ function loadTasks() {
   }
 }
 
+const THEME_KEY = 'kanban-theme';
+
+function loadTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved) return saved;
+  } catch {
+    /* localStorage no disponible */
+  }
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 export default function App() {
   const [tasks, setTasks] = useState(loadTasks);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);
+
+  const [theme, setTheme] = useState(loadTheme);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
 
   const handleAdd = (title, description) => setTasks((prev) => [...prev, createTask(title, description)]);
   const handleUpdate = (id, changes) => setTasks((prev) => updateTask(prev, id, changes));
@@ -27,7 +48,12 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>Tablero Kanban</h1>
+      <header className="app-header">
+        <h1>Tablero Kanban</h1>
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Cambiar tema">
+          {theme === 'dark' ? '☀️ Modo claro' : '🌙 Modo oscuro'}
+        </button>
+      </header>
       <TaskForm onAdd={handleAdd} />
       <main className="board">
         {COLUMNS.map((column) => (
